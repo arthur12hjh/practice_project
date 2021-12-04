@@ -6,7 +6,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -22,14 +21,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.Pair;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,16 +35,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Fragment;
 
 import com.example.imageclassifier.camera.CameraFragment;
-import com.example.imageclassifier.camera.CustomView;
-import com.example.imageclassifier.tflite.Classifier;
 import com.example.imageclassifier.tflite.FindFace;
 import com.example.imageclassifier.tflite.Landmarks;
 import com.example.imageclassifier.utils.YuvToRgbConverter;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Locale;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "[IC]MainActivity";

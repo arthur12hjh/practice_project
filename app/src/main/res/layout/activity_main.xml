@@ -28,8 +28,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Result"
-            android:layout_below="@+id/fragment" />
+            android:layout_below="@+id/getsize" />
 
+<!--        <ImageView-->
+<!--            android:id="@+id/filter"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"/>-->
+
+        <ImageView
+            android:id="@+id/testbitmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+<!--            android:layout_below="@+id/filter"/>-->
         <ImageView
             android:id="@+id/filter"
             android:layout_width="wrap_content"

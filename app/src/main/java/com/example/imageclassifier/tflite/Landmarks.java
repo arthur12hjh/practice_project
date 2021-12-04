@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
+import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
@@ -16,20 +18,25 @@ import androidx.annotation.NonNull;
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.Tensor;
 import org.tensorflow.lite.gpu.CompatibilityList;
+import org.tensorflow.lite.support.common.FileUtil;
 import org.tensorflow.lite.support.common.ops.NormalizeOp;
 import org.tensorflow.lite.support.image.ImageProcessor;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.image.ops.ResizeOp;
 import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
 import org.tensorflow.lite.support.image.ops.Rot90Op;
+import org.tensorflow.lite.support.label.TensorLabel;
 import org.tensorflow.lite.support.model.Model;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Landmarks {
     private static final String MODEL_NAME = "lmks.tflite";
@@ -40,8 +47,8 @@ public class Landmarks {
     TensorImage inputImage;
     TensorBuffer outputBuffer;
 
-    public int left = 0;
-    public int top = 0;
+    public float left = 0;
+    public float top = 0;
     public float ratio = 0.F;
 
     private boolean isInitialized = false;
@@ -225,11 +232,16 @@ public class Landmarks {
     public Bitmap add_border_img(Bitmap im){
         float[] old_size = {im.getWidth(), im.getHeight()};
         ratio = 224.0F / (Math.max(old_size[0], old_size[1]));
+
         float new_size[] = {old_size[0]*ratio, old_size[1] * ratio };
-        left = (int) ((224 - (int)new_size[0])/2);
-        top = (int) ((224 - (int)new_size[1])/2);
+
+        left = ((224.0f - new_size[0])/2);
+        top = ((224.0f - new_size[1])/2);
+
+        Log.d("top", "" + top);
+
         im = Bitmap.createScaledBitmap(im, (int)new_size[0], (int)new_size[1], false);
-        Bitmap imWithBorder = Bitmap.createBitmap(im.getWidth() + left * 2, im.getHeight() + top * 2, im.getConfig());
+        Bitmap imWithBorder = Bitmap.createBitmap(im.getWidth() + (int)left * 2, im.getHeight() + (int)top * 2, im.getConfig());
         Canvas canvas = new Canvas(imWithBorder);
         canvas.drawColor(Color.BLACK);
         canvas.drawBitmap(im, left, top, null);
@@ -319,4 +331,6 @@ public class Landmarks {
             isInitialized = false;
         }
     }
+
+
 }

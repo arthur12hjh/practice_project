@@ -47,8 +47,8 @@ public class FindFace {
     TensorImage inputImage;
     TensorBuffer outputBuffer;
 
-    public int left = 0;
-    public int top = 0;
+    public float left = 0;
+    public float top = 0;
     public float ratio = 0.F;
 
     private boolean isInitialized = false;
@@ -232,11 +232,16 @@ public class FindFace {
     public Bitmap add_border_img(Bitmap im){
         float[] old_size = {im.getWidth(), im.getHeight()};
         ratio = 224.0F / (Math.max(old_size[0], old_size[1]));
+
         float new_size[] = {old_size[0]*ratio, old_size[1] * ratio };
-        left = (int) ((224 - (int)new_size[0])/2);
-        top = (int) ((224 - (int)new_size[1])/2);
+
+        left = ((224.0f - new_size[0])/2);
+        top = ((224.0f - new_size[1])/2);
+
+        Log.d("top", "" + top);
+
         im = Bitmap.createScaledBitmap(im, (int)new_size[0], (int)new_size[1], false);
-        Bitmap imWithBorder = Bitmap.createBitmap(im.getWidth() + left * 2, im.getHeight() + top * 2, im.getConfig());
+        Bitmap imWithBorder = Bitmap.createBitmap(im.getWidth() + (int)left * 2, im.getHeight() + (int)top * 2, im.getConfig());
         Canvas canvas = new Canvas(imWithBorder);
         canvas.drawColor(Color.BLACK);
         canvas.drawBitmap(im, left, top, null);

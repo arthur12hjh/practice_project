@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".camera.CameraFragment">
 
+
     <com.example.imageclassifier.camera.AutoFitTextureView
         android:id="@+id/autoFitTextureView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
 
 </FrameLayout>

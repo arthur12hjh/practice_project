@@ -7,7 +7,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -20,8 +24,12 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 import android.util.Size;
+import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Fragment;
 
 import com.example.imageclassifier.camera.CameraFragment;
+import com.example.imageclassifier.camera.CustomView;
 import com.example.imageclassifier.tflite.Classifier;
 import com.example.imageclassifier.tflite.FindFace;
 import com.example.imageclassifier.tflite.Landmarks;
@@ -64,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isProcessingFrame = false;
 
+    int displayWidth;
+    int displayHeight;
+
+    private FrameLayout getsize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(null);
@@ -72,7 +86,33 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         textView = findViewById(R.id.textView);
-        logText = findViewById(R.id.logText);
+
+        getsize = findViewById(R.id.getsize);
+
+        Display display = getWindowManager().getDefaultDisplay();  // in Activity
+        /* getActivity().getWindowManager().getDefaultDisplay() */ // in Fragment
+        Point size = new Point();
+        display.getSize(size); // or getSize(size)
+        displayWidth = size.x;
+        displayHeight = size.y;
+
+
+//        logText = findViewById(R.id.logText);
+
+//        Bitmap bitmap = Bitmap.createBitmap(800,800, Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        canvas.drawColor(Color.WHITE);
+//
+//        ImageView filter = findViewById(R.id.filter);
+//        filter.setImageBitmap(bitmap);
+//
+//        Paint paint = new Paint();
+//
+//        paint.setColor(Color.RED);
+//        paint.setStrokeWidth(30f);
+//        canvas.drawPoint(360, 640, paint);
+
+
 
         try {
             ff = new FindFace(this);
@@ -191,6 +231,9 @@ public class MainActivity extends AppCompatActivity {
                     inputSize_2,
                     cameraId);
 
+
+
+
             Log.d("kk", "inputSize : " + ff.getModelInputSize() +
                     "sensorOrientation : " + sensorOrientation);
             getFragmentManager().beginTransaction().replace(
@@ -253,6 +296,10 @@ public class MainActivity extends AppCompatActivity {
         isProcessingFrame = true;
 
         final Image image = reader.acquireLatestImage();
+
+        Log.d("ratio" , "imaggesize = " + image.getHeight() + ", " + image.getWidth());
+        Log.d("dspsize", "display" + displayWidth + ", " + displayHeight);
+
         if (image == null) {
             isProcessingFrame = false;
             return;
@@ -263,7 +310,6 @@ public class MainActivity extends AppCompatActivity {
 
         YuvToRgbConverter.yuvToRgb(this, image, rgbFrameBitmap);
 
-        Log.d("yes", rgbFrameBitmap.getClass().getName());
 
 //        runInBackground(() -> {
 //            if (cls != null && cls.isInitialized()) {
@@ -286,10 +332,26 @@ public class MainActivity extends AppCompatActivity {
 
         runInBackground(() -> {
             if (ff != null && ff.isInitialized()) {
+
+                final float displayRatio = ((float)Math.min(displayHeight, displayHeight)) / 224.0F;
+
                 final long startTime = SystemClock.uptimeMillis();
                 final float[] pred_bb = ff.classify(rgbFrameBitmap, sensorOrientation);
-                final int[] ori_bb = {(int)((pred_bb[0]-(float)ff.left)/ff.ratio), (int)((pred_bb[1]-(float)ff.top)/ff.ratio),
-                                        (int)((pred_bb[2]-(float)ff.left)/ff.ratio), (int)((pred_bb[3]-(float)ff.left)/ff.ratio)};
+
+
+
+                float rr = (float)displayWidth /  ( 224.0F - (ff.left * 2));
+                float prev_ratio = (float)previewHeight / (float)previewWidth;
+
+                Log.d("prevratio", " " + ff.left);
+
+                final int[] ori_bb = {(int)((pred_bb[0]-(float)ff.left)  *rr), (int)((pred_bb[1]-(float)ff.top)*rr),
+                                        (int)((pred_bb[2]-(float)ff.left)*rr), (int)((pred_bb[3]-(float)ff.left)*rr)};
+
+                Log.d("good", "nice!");
+                Log.d("good", " size is " + getsize.getWidth());
+                Log.d("good", String.valueOf( " " + ori_bb[0] + ",  " +  ori_bb[1]));
+                Log.d("good", String.valueOf( " " + ori_bb[2] + ",  " +  ori_bb[3]));
 
                 final float[] center = {(ori_bb[0]+ori_bb[2])/2, (ori_bb[1]+ori_bb[3])/2};
                 final int face_size = Math.max(Math.abs(ori_bb[2] - ori_bb[0]), Math.abs(ori_bb[3] - ori_bb[1]));
@@ -299,15 +361,14 @@ public class MainActivity extends AppCompatActivity {
                     if(new_bb[i] > 99999)   new_bb[i] = 99999;
                     if(new_bb[i] < 0)   new_bb[i] = 0;
                 }
-                Log.d("good", "nice!");
-                Log.d("good", String.valueOf(new_bb[0]));
-                Log.d("good", String.valueOf(new_bb[1]));
-                Log.d("good", String.valueOf(new_bb[2]));
-                Log.d("good", String.valueOf(new_bb[3]));
+
+
+
+
 
 
 //                face_img = cropBitmap(rgbFrameBitmap, new_bb[0], new_bb[1], new_bb[2], new_bb[3]);
-//
+
 //                final float[] pred_lmks = lm.classify(face_img, sensorOrientation);
 //                final int[][] ori_lmks = new int[9][2];
 //                int k = 0;
@@ -325,8 +386,25 @@ public class MainActivity extends AppCompatActivity {
 //                }
 
                 runOnUiThread(() -> {
-                    String logStr = elapsedTime + " ms";
-                    logText.setText(logStr);
+//                    String logStr = elapsedTime + " ms";
+//                    logText.setText(logStr);
+
+                            Bitmap bitmap = Bitmap.createBitmap(800,800, Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(bitmap);
+                            canvas.drawColor(Color.WHITE);
+
+                            ImageView filter = findViewById(R.id.filter);
+                            filter.setImageBitmap(bitmap);
+
+                            Paint paint = new Paint();
+
+                            paint.setColor(Color.RED);
+                            paint.setStrokeWidth(30f);
+//                            canvas.drawPoint((displayWidth - ori_bb[0]), (getsize.getHeight() - ori_bb[1]), paint);
+//                            canvas.drawPoint((displayWidth - ori_bb[2]), (getsize.getHeight() - ori_bb[3]), paint);
+
+
+
 
 
 //                    Log.d("test", (String) output.get(0));
@@ -334,7 +412,11 @@ public class MainActivity extends AppCompatActivity {
 //                            "class : %f, prob : %f",
 //                            output.get(0), output.get(1));
 //                    textView.setText(resultStr);
-                });
+                }
+
+                );
+
+
             }
             image.close();
             isProcessingFrame = false;

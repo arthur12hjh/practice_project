@@ -331,18 +331,27 @@ public class MainActivity extends AppCompatActivity {
                 final float displayRatio = ((float)Math.min(displayHeight, displayHeight)) / 224.0F;
 
                 final long startTime = SystemClock.uptimeMillis();
-                final float[] pred_bb = ff.classify(rgbFrameBitmap, sensorOrientation);
 
-                float[] reverse_bb = {224.0f-pred_bb[0], 224.0f-pred_bb[1], 224.0f-pred_bb[2], 224.0f-pred_bb[3]};
+                Matrix rotateMatrix3 = new Matrix();
+                rotateMatrix3.postRotate(180); //-360~360
+                Bitmap rgb2 = Bitmap.createBitmap(rgbFrameBitmap, 0, 0,
+                        rgbFrameBitmap.getWidth(), rgbFrameBitmap.getHeight(), rotateMatrix3, false);
 
 
 
-                float rr = (float)displayWidth /  224.0f;
+                final float[] pred_bb = ff.classify(rgb2, sensorOrientation);
+
+                float[] reverse_bb = {224.0F-pred_bb[0], 224.0F-pred_bb[1], 224.0F-pred_bb[2], 224.0F-pred_bb[3]};
+
+
+
+                float rr = (float)displayWidth /  (224.0F-(ff.top*2));
                 float prev_ratio = (float)previewHeight / (float)previewWidth;
 
                 Log.d("prevratio", " " + ff.left + "," + ff.top);
 
-                final int[] ori_bb = {(int)((reverse_bb[0]+ff.left)*rr), (int)((reverse_bb[1]+ff.top)*rr), (int)((reverse_bb[2]+ff.left)*rr), (int)((reverse_bb[3]+ff.top)*rr)};
+                final int[] ori_bb = {(int)((pred_bb[0]-ff.top)*rr), (int)((pred_bb[1]-ff.left)*rr),
+                        (int)((pred_bb[2]-ff.top)*rr), (int)((pred_bb[3]-ff.left)*rr)};
 
 
 //                final int[] ori_bb = {(int)((pred_bb[0]-(float)ff.left)  *rr), (int)((pred_bb[1]-(float)ff.top)*rr),
@@ -366,8 +375,8 @@ public class MainActivity extends AppCompatActivity {
 
                 final float[] center = {(ori_bb[0]+ori_bb[2])/2, (ori_bb[1]+ori_bb[3])/2};
                 final int face_size = Math.max(Math.abs(ori_bb[2] - ori_bb[0]), Math.abs(ori_bb[3] - ori_bb[1]));
-                final int[] new_bb = {(int)(center[0]-(float)(face_size)*1.0F), (int)(center[1]-(float)(face_size)*1.0F),
-                                        (int)(center[0]+(float)(face_size)*1.0F), (int)(center[1]+(float)(face_size)*1.0F)};
+                final int[] new_bb = {(int)(center[0]-(float)(face_size)*0.6F), (int)(center[1]-(float)(face_size)*0.6F),
+                                        (int)(center[0]+(float)(face_size)*0.6F), (int)(center[1]+(float)(face_size)*0.6F)};
                 for(int i=0; i<4; i++){
                     if(new_bb[i] > 99999)   new_bb[i] = 99999;
                     if(new_bb[i] < 0)   new_bb[i] = 0;
@@ -384,46 +393,63 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap sideInversionImg = Bitmap.createBitmap(rgbFrameBitmap, 0, 0,
                         rgbFrameBitmap.getWidth(), rgbFrameBitmap.getHeight(), rotateMatrix, false);
 
+//                Bitmap side_2 = ff.add_border_img(sideInversionImg);
+                Log.d("top", ""+ff.top+", left is" + ff.left);
 
-                float rate = (float)sideInversionImg.getWidth() / (float) getsize.getWidth();
-                Log.d("good3", ""+ sideInversionImg.getWidth());
 
+                float rate = (float)getsize.getWidth() / (float)sideInversionImg.getWidth();
 
-                if((int) (new_bb[2]*rate) <= sideInversionImg.getWidth())
-                    face_img = cropBitmap(sideInversionImg, (int) (new_bb[0]*rate), (int) (new_bb[1]*rate), (int) (new_bb[2]*rate), (int) (new_bb[3]*rate));
+                Log.d("kk", ""+sideInversionImg.getWidth());
 
+                if(((int)((float)new_bb[2]/rate) <= sideInversionImg.getWidth()) && (int)((float)new_bb[3]/rate) <= sideInversionImg.getHeight())
+                    face_img = cropBitmap(sideInversionImg, (int)((float)new_bb[0]/rate), (int)((float)new_bb[1]/rate),
+                            (int)((float)new_bb[2]/rate), (int)((float)new_bb[3]/rate));
+
+//                float rate = (float)sideInversionImg.getWidth() / (float) getsize.getWidth();
+//                Log.d("good3", ""+ sideInversionImg.getWidth());
+//
+//
+//                if((int) (new_bb[2]*rate) <= sideInversionImg.getWidth())
+//                    face_img = cropBitmap(sideInversionImg, (int) (new_bb[0]*rate), (int) (new_bb[1]*rate), (int) (new_bb[2]*rate), (int) (new_bb[3]*rate));
+////
                 Matrix rotateMatrix2 = new Matrix();
-                rotateMatrix2.postRotate(270); //-360~360
+                rotateMatrix2.postRotate(90); //-360~360
                 face_img2 = Bitmap.createBitmap(face_img, 0, 0,
                         face_img.getWidth(), face_img.getHeight(), rotateMatrix2, false);
 
 
                 final float[] pred_lmks = lm.classify(face_img2, sensorOrientation);
+//                float[] reverse_lmks = new float[18];
+//                for(int i=0; i<18; i++){
+//                    reverse_lmks[i] = 224.0F - pred_lmks[i];
+//                }
+
+
                 final int[][] ori_lmks = new int[9][2];
                 int k = 0;
 
 
 
                 for(int i=0; i<9; i++){
-                    ori_lmks[i][0] = (int)(((pred_lmks[k++]-lm.left)/(lm.ratio)) / rate) + new_bb[0];
-                    ori_lmks[i][1] = (int)(((pred_lmks[k++]-lm.top)/(lm.ratio)) / rate) + new_bb[1];
+                    ori_lmks[i][0] = (int)(((pred_lmks[k++]-lm.top)/(lm.ratio)) * rate) + new_bb[0];
+                    ori_lmks[i][1] = (int)(((pred_lmks[k++]-lm.left)/(lm.ratio)) * rate) + new_bb[1];
                 }
-
-                Log.d("good4", "bigface");
-                Log.d("good7", String.valueOf( "face " + face_img.getWidth() + ",  " +  face_img.getHeight()));
-                Log.d("good7", String.valueOf( "lm.ratio " + lm.ratio ));
-                Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[0] + ",  " +  pred_lmks[1]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[2] + ",  " +  pred_lmks[3]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[4] + ",  " +  pred_lmks[5]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[6] + ",  " +  pred_lmks[7]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[8] + ",  " +  pred_lmks[9]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[10] + ",  " +  pred_lmks[11]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[12] + ",  " +  pred_lmks[13]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[14] + ",  " +  pred_lmks[15]));
-                Log.d("good4", String.valueOf( " " + pred_lmks[16] + ",  " +  pred_lmks[17]));
-
-
+////
+//                Log.d("good4", "bigface");
+//                Log.d("good7", String.valueOf( "face " + face_img.getWidth() + ",  " +  face_img.getHeight()));
+//                Log.d("good7", String.valueOf( "lm.ratio " + lm.ratio ));
+//                Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[0] + ",  " +  pred_lmks[1]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[2] + ",  " +  pred_lmks[3]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[4] + ",  " +  pred_lmks[5]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[6] + ",  " +  pred_lmks[7]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[8] + ",  " +  pred_lmks[9]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[10] + ",  " +  pred_lmks[11]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[12] + ",  " +  pred_lmks[13]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[14] + ",  " +  pred_lmks[15]));
+//                Log.d("good4", String.valueOf( " " + pred_lmks[16] + ",  " +  pred_lmks[17]));
+//
+//
 
                 final long elapsedTime = SystemClock.uptimeMillis() - startTime;
 
@@ -447,7 +473,7 @@ public class MainActivity extends AppCompatActivity {
                             Paint paint = new Paint();
 
                             paint.setColor(Color.RED);
-                            paint.setStrokeWidth(20f);
+                            paint.setStrokeWidth(7f);
 
 //                            Bitmap test = ff.add_border_img(rgbFrameBitmap);
 
@@ -463,25 +489,34 @@ public class MainActivity extends AppCompatActivity {
 
 //                            canvas.drawPoint((displayWidth - ori_bb[0]), (getsize.getHeight() - ori_bb[1]), paint);
 //                            canvas.drawPoint((displayWidth - ori_bb[2]), (getsize.getHeight() - ori_bb[3]), paint);
-                            canvas.drawPoint(ori_bb[0], ori_bb[1], paint);
-                            canvas.drawPoint(ori_bb[2], ori_bb[3], paint);
+//                            canvas.drawPoint(ori_bb[0], ori_bb[1], paint);
+//                            canvas.drawPoint(ori_bb[2], ori_bb[3], paint);
 
-                            paint.setStrokeWidth(30f);
-
-                            canvas.drawPoint(new_bb[0], new_bb[1], paint);
-                            canvas.drawPoint(new_bb[2], new_bb[3], paint);
+//                            canvas.drawPoint(reverse_lmks[0], reverse_lmks[1], paint);
+//                            canvas.drawPoint(reverse_lmks[2], reverse_lmks[3], paint);
+//////
+////                            paint.setStrokeWidth(30f);
+////
+//                            canvas.drawPoint(new_bb[0], new_bb[1], paint);
+//                            canvas.drawPoint(new_bb[2], new_bb[3], paint);
 
 
                             paint.setStrokeWidth(5f);
-                            canvas.drawPoint(pred_lmks[0], pred_lmks[1], paint);
-                            canvas.drawPoint(pred_lmks[2], pred_lmks[3], paint);
-
-
-                            Log.d("good4", String.valueOf( "ori_lmks[0][0] " + ori_lmks[0][0] + ",  " +  ori_lmks[0][1]));
-                            Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
-                            paint.setStrokeWidth(10f);
                             canvas.drawPoint(ori_lmks[0][0], ori_lmks[0][1], paint);
                             canvas.drawPoint(ori_lmks[1][0], ori_lmks[1][1], paint);
+                            canvas.drawPoint(ori_lmks[2][0], ori_lmks[2][1], paint);
+                            canvas.drawPoint(ori_lmks[3][0], ori_lmks[3][1], paint);
+                            canvas.drawPoint(ori_lmks[4][0], ori_lmks[4][1], paint);
+                            canvas.drawPoint(ori_lmks[5][0], ori_lmks[5][1], paint);
+                            canvas.drawPoint(ori_lmks[6][0], ori_lmks[6][1], paint);
+                            canvas.drawPoint(ori_lmks[7][0], ori_lmks[7][1], paint);
+                            canvas.drawPoint(ori_lmks[8][0], ori_lmks[8][1], paint);
+
+//                            Log.d("good4", String.valueOf( "ori_lmks[0][0] " + ori_lmks[0][0] + ",  " +  ori_lmks[0][1]));
+//                            Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
+//                            paint.setStrokeWidth(10f);
+//                            canvas.drawPoint(ori_lmks[0][0], ori_lmks[0][1], paint);
+//                            canvas.drawPoint(ori_lmks[1][0], ori_lmks[1][1], paint);
 
 
 //                            canvas.drawPoint(new_bb[0] + ori_lmks[0][0], new_bb[1] + ori_lmks[0][1], paint);

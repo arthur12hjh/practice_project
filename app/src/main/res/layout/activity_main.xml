@@ -4,16 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
+=======
+    android:background="@drawable/background"
+>>>>>>> finished
     tools:context=".MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
+<<<<<<< HEAD
         android:layout_height="match_parent">
+=======
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+>>>>>>> finished
 
         <FrameLayout
             android:id="@+id/getsize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+<<<<<<< HEAD
         <FrameLayout
             android:id="@+id/fragment"
             android:layout_width="match_parent"
@@ -54,6 +65,155 @@
 <!--        android:text="0 ms"-->
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        app:layout_constraintRight_toRightOf="parent" />-->
+=======
+
+            <FrameLayout
+                android:id="@+id/fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+
+        <ImageButton
+            android:id="@+id/testbitmap"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="280dp"
+            android:layout_marginBottom="30dp"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/buttonalbum"
+            android:visibility="visible"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <ImageButton
+            android:id="@+id/filterbt"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="280dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:background="@color/transparent"
+            android:padding="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/buttonfilter"
+            android:visibility="visible"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+
+        <ImageButton
+            android:id="@+id/Shutter"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="134dp"
+            android:layout_marginEnd="135dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/transparent"
+            android:padding="0dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/buttoncamera"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+
+
+        <ImageButton
+            android:id="@+id/bitSunglass"
+            android:layout_width="139dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="270dp"
+            android:layout_marginBottom="66dp"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.056"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/pngegg"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/Sunglass1"
+            android:layout_width="125dp"
+            android:layout_height="53dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="145dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="141dp"
+            android:layout_marginBottom="64dp"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.508"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/sunglass"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/circleX"
+            android:layout_width="82dp"
+            android:layout_height="69dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="163dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="165dp"
+            android:layout_marginBottom="3dp"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.508"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_revert"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/rudolph"
+            android:layout_width="125dp"
+            android:layout_height="53dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="278dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="65dp"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.508"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/rudolph_button"
+            android:visibility="gone" />
+
+>>>>>>> finished
 
     </RelativeLayout>
 

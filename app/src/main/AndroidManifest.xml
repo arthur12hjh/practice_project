@@ -9,9 +9,16 @@
 
     <application
         android:allowBackup="true"
+<<<<<<< HEAD
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+=======
+        android:icon="@drawable/logocolor"
+        android:label="DongFil"
+
+        android:roundIcon="@drawable/logocolor"
+>>>>>>> finished
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"

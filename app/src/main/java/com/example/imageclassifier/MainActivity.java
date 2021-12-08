@@ -3,34 +3,74 @@ package com.example.imageclassifier;
 import static java.lang.Math.abs;
 
 import android.Manifest;
+<<<<<<< HEAD
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+=======
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+>>>>>>> finished
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+<<<<<<< HEAD
+=======
+import android.graphics.drawable.BitmapDrawable;
+>>>>>>> finished
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.media.Image;
 import android.media.ImageReader;
+<<<<<<< HEAD
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
+=======
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
+import android.provider.MediaStore;
+>>>>>>> finished
 import android.util.Log;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
+<<<<<<< HEAD
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+=======
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+>>>>>>> finished
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+<<<<<<< HEAD
+=======
+import androidx.annotation.RequiresApi;
+>>>>>>> finished
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.Fragment;
 
@@ -39,7 +79,16 @@ import com.example.imageclassifier.tflite.FindFace;
 import com.example.imageclassifier.tflite.Landmarks;
 import com.example.imageclassifier.utils.YuvToRgbConverter;
 
+<<<<<<< HEAD
 import java.io.IOException;
+=======
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+>>>>>>> finished
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "[IC]MainActivity";
@@ -70,7 +119,26 @@ public class MainActivity extends AppCompatActivity {
     int displayHeight;
 
     private FrameLayout getsize;
+<<<<<<< HEAD
     private ImageView testbitmap;
+=======
+    //private ImageView testbitmap;
+
+    private int filterNum = 0;
+    final int GET_GALLERY_IMAGE = 200;
+    private ImageView filter;
+
+    Bitmap rgbFrameBitmap2;
+
+    ImageButton filterbt;
+    ImageButton Shutter;
+    ImageButton album;
+    ImageButton bitSunglass;
+    ImageButton Sunglass1;
+    ImageButton rudolph;
+    ImageButton backFilter;
+
+>>>>>>> finished
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +147,19 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+<<<<<<< HEAD
         textView = findViewById(R.id.textView);
 
         getsize = findViewById(R.id.getsize);
         testbitmap = findViewById(R.id.testbitmap);
+=======
+        filter = findViewById(R.id.filter);
+
+        getsize = findViewById(R.id.getsize);
+        //testbitmap = findViewById(R.id.testbitmap);
+
+
+>>>>>>> finished
 
         Display display = getWindowManager().getDefaultDisplay();  // in Activity
         /* getActivity().getWindowManager().getDefaultDisplay() */ // in Fragment
@@ -123,8 +200,230 @@ public class MainActivity extends AppCompatActivity {
         } else {
             requestPermissions(new String[]{CAMERA_PERMISSION}, PERMISSION_REQUEST_CODE);
         }
+<<<<<<< HEAD
     }
 
+=======
+
+        filterbt = (ImageButton) findViewById(R.id.filterbt);
+        Shutter = (ImageButton) findViewById(R.id.Shutter);
+        album = (ImageButton) findViewById(R.id.testbitmap);
+        bitSunglass = (ImageButton) findViewById(R.id.bitSunglass);
+        Sunglass1 = (ImageButton) findViewById(R.id.Sunglass1);
+        rudolph = (ImageButton) findViewById(R.id.rudolph);
+        backFilter = (ImageButton) findViewById(R.id.circleX);
+
+        album.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent,GET_GALLERY_IMAGE);
+            }
+        });
+//
+
+
+        filterbt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 1. 촬영, 앨범, 필터 버튼 지우기
+                filterbt.setVisibility(View.GONE);
+                Shutter.setVisibility(View.GONE);
+                album.setVisibility(View.GONE);
+
+                // 2. 필터 탭 열기
+                bitSunglass.setVisibility(View.VISIBLE);
+                Sunglass1.setVisibility(View.VISIBLE);
+                backFilter.setVisibility(View.VISIBLE);
+                rudolph.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        backFilter.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 1. 필터 종류 선택하여 전역변수로 넘기기
+                filterNum = 0;
+
+                // 2. 필터 탭 종료 후 촬영, 앨범, 필터 버튼 재생성
+                bitSunglass.setVisibility(View.GONE);
+                Sunglass1.setVisibility(View.GONE);
+                backFilter.setVisibility(View.GONE);
+                rudolph.setVisibility(View.GONE);
+                filterbt.setVisibility(View.VISIBLE);
+                Shutter.setVisibility(View.VISIBLE);
+                album.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        bitSunglass.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 1. 필터 종류 선택하여 전역변수로 넘기기
+                filterNum = 1;
+
+                // 2. 필터 탭 종료 후 촬영, 앨범, 필터 버튼 재생성
+                bitSunglass.setVisibility(View.GONE);
+                Sunglass1.setVisibility(View.GONE);
+                backFilter.setVisibility(View.GONE);
+                rudolph.setVisibility(View.GONE);
+                filterbt.setVisibility(View.VISIBLE);
+                Shutter.setVisibility(View.VISIBLE);
+                album.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        Sunglass1.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 1. 필터 종류 선택하여 전역변수로 넘기기
+                filterNum = 2;
+
+                // 2. 필터 탭 종료 후 촬영, 앨범, 필터 버튼 재생성
+                bitSunglass.setVisibility(View.GONE);
+                Sunglass1.setVisibility(View.GONE);
+                backFilter.setVisibility(View.GONE);
+                rudolph.setVisibility(View.GONE);
+                filterbt.setVisibility(View.VISIBLE);
+                Shutter.setVisibility(View.VISIBLE);
+                album.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        rudolph.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                // 1. 필터 종류 선택하여 전역변수로 넘기기
+                filterNum = 3;
+
+                // 2. 필터 탭 종료 후 촬영, 앨범, 필터 버튼 재생성
+                bitSunglass.setVisibility(View.GONE);
+                Sunglass1.setVisibility(View.GONE);
+                backFilter.setVisibility(View.GONE);
+                rudolph.setVisibility(View.GONE);
+                filterbt.setVisibility(View.VISIBLE);
+                Shutter.setVisibility(View.VISIBLE);
+                album.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        Shutter.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                Matrix rotateMatrix3 = new Matrix();
+                rotateMatrix3.postRotate(90); //-360~360
+                rgbFrameBitmap2 = Bitmap.createBitmap(rgbFrameBitmap, 0, 0,
+                        rgbFrameBitmap.getWidth(), rgbFrameBitmap.getHeight(), rotateMatrix3, false);
+
+                BitmapDrawable drawable = (BitmapDrawable) filter.getDrawable();
+                Bitmap bitmap = drawable.getBitmap();
+
+                int resizeWidth = getsize.getWidth();
+
+                double aspectRatio = (double) rgbFrameBitmap2.getHeight() / (double) rgbFrameBitmap2.getWidth();
+                int targetHeight = (int) (resizeWidth * aspectRatio);
+                Bitmap result = Bitmap.createScaledBitmap(rgbFrameBitmap2, resizeWidth, targetHeight, false);
+
+                Bitmap resultOverlayBmp = Bitmap.createBitmap(result.getWidth()
+                        , result.getHeight()
+                        , result.getConfig());
+
+                Paint alphaPaint = new Paint();
+                alphaPaint.setAlpha(255);
+
+                Log.d("qqq", ""+resultOverlayBmp.getHeight() + " wid = " + resultOverlayBmp.getWidth());
+
+                //캔버스를 통해 비트맵을 겹치기한다.
+                Canvas canvas = new Canvas(resultOverlayBmp);
+                canvas.drawBitmap(result, new Matrix(), null);
+                canvas.drawBitmap(bitmap, new Matrix(), alphaPaint);
+
+                saveFile(resultOverlayBmp);
+                Toast.makeText(getApplicationContext(), "image saved", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+    private void saveFile(Bitmap bmp) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "image_1024.JPG");
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.Images.Media.IS_PENDING, 1);
+        }
+
+        ContentResolver contentResolver = getContentResolver();
+        Uri item = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        try {
+            ParcelFileDescriptor pdf = contentResolver.openFileDescriptor(item, "w", null);
+
+            if (pdf == null) {
+                Log.d("asdf", "null");
+            } else {
+                InputStream inputStream = getImageInputStram(bmp);
+                byte[] strToByte = getBytes(inputStream);
+                FileOutputStream fos = new FileOutputStream(pdf.getFileDescriptor());
+                fos.write(strToByte);
+                fos.close();
+                inputStream.close();
+                pdf.close();
+                contentResolver.update(item, values, null, null);
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    values.clear();
+                    values.put(MediaStore.Images.Media.IS_PENDING, 0);
+                    contentResolver.update(item, values, null, null);
+                }
+
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private InputStream getImageInputStram( Bitmap bmp) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, bytes);
+        byte[] bitmapData = bytes.toByteArray();
+        ByteArrayInputStream bs = new ByteArrayInputStream(bitmapData);
+        return bs;
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+
+
+>>>>>>> finished
     @Override
     protected synchronized void onDestroy() {
         ff.finish();
@@ -211,6 +510,10 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
+<<<<<<< HEAD
+=======
+    @RequiresApi(api = Build.VERSION_CODES.R)
+>>>>>>> finished
     protected void setFragment() {
         Size inputSize_2 = ff.getModelInputSize();
         String cameraId = chooseCamera();
@@ -259,6 +562,10 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
+<<<<<<< HEAD
+=======
+    @RequiresApi(api = Build.VERSION_CODES.R)
+>>>>>>> finished
     protected int getScreenOrientation() {
         switch (getDisplay().getRotation()) {
             case Surface.ROTATION_270:
@@ -376,7 +683,11 @@ public class MainActivity extends AppCompatActivity {
                 final float[] center = {(ori_bb[0]+ori_bb[2])/2, (ori_bb[1]+ori_bb[3])/2};
                 final int face_size = Math.max(Math.abs(ori_bb[2] - ori_bb[0]), Math.abs(ori_bb[3] - ori_bb[1]));
                 final int[] new_bb = {(int)(center[0]-(float)(face_size)*0.6F), (int)(center[1]-(float)(face_size)*0.6F),
+<<<<<<< HEAD
                                         (int)(center[0]+(float)(face_size)*0.6F), (int)(center[1]+(float)(face_size)*0.6F)};
+=======
+                        (int)(center[0]+(float)(face_size)*0.6F), (int)(center[1]+(float)(face_size)*0.6F)};
+>>>>>>> finished
                 for(int i=0; i<4; i++){
                     if(new_bb[i] > 99999)   new_bb[i] = 99999;
                     if(new_bb[i] < 0)   new_bb[i] = 0;
@@ -467,7 +778,11 @@ public class MainActivity extends AppCompatActivity {
                             Canvas canvas = new Canvas(bitmap);
                             canvas.drawColor(Color.TRANSPARENT);
 
+<<<<<<< HEAD
                             ImageView filter = findViewById(R.id.filter);
+=======
+//                            ImageView filter = findViewById(R.id.filter);
+>>>>>>> finished
                             filter.setImageBitmap(bitmap);
 
                             Paint paint = new Paint();
@@ -482,9 +797,17 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+<<<<<<< HEAD
                             Bitmap ttt = ff.add_border_img(face_img);
 
                             testbitmap.setImageBitmap(ttt);
+=======
+
+
+//                            Bitmap ttt = ff.add_border_img();
+
+//                            album.setImageBitmap(rgbFrameBitmap2);
+>>>>>>> finished
 
 
 //                            canvas.drawPoint((displayWidth - ori_bb[0]), (getsize.getHeight() - ori_bb[1]), paint);
@@ -501,6 +824,7 @@ public class MainActivity extends AppCompatActivity {
 //                            canvas.drawPoint(new_bb[2], new_bb[3], paint);
 
 
+<<<<<<< HEAD
                             paint.setStrokeWidth(5f);
                             canvas.drawPoint(ori_lmks[0][0], ori_lmks[0][1], paint);
                             canvas.drawPoint(ori_lmks[1][0], ori_lmks[1][1], paint);
@@ -511,6 +835,84 @@ public class MainActivity extends AppCompatActivity {
                             canvas.drawPoint(ori_lmks[6][0], ori_lmks[6][1], paint);
                             canvas.drawPoint(ori_lmks[7][0], ori_lmks[7][1], paint);
                             canvas.drawPoint(ori_lmks[8][0], ori_lmks[8][1], paint);
+=======
+                            Bitmap picture;
+                            Matrix matrix;
+
+                            int xd, yd;
+                            yd = (int) Math.pow((ori_lmks[1][1]-ori_lmks[0][1]),2);
+                            xd = (int) Math.pow((ori_lmks[1][0]-ori_lmks[0][0]),2);
+                            double disWidth = Math.sqrt((double)yd+(double)xd);
+                            double height = disWidth * 1.5;
+                            double width = disWidth*3;
+
+                            int startx, starty;
+
+                            double radian = Math.atan2(((float)ori_lmks[1][1] - ori_lmks[0][1]),((float)ori_lmks[1][0] - ori_lmks[0][0]));
+                            double degree = radian*180 / Math.PI;
+                            double one = height / 2;
+                            double two = (width - disWidth) / 2;
+
+                            Bitmap rotatedpicture;
+
+                            switch (filterNum) {
+                                case 1:
+                                    picture = BitmapFactory.decodeResource(getResources(),R.drawable.pngegg);
+                                    matrix = new Matrix();
+
+                                    matrix.postRotate((float) degree);
+
+                                    picture = Bitmap.createScaledBitmap(picture,(int)width,(int)height,true);
+
+                                    if(degree>=0) {
+                                        startx = (int) ((double)ori_lmks[0][0] - one * Math.sin(radian) - two * Math.cos(radian));
+                                        starty = (int) ((double)ori_lmks[0][1] - one * Math.cos(radian) - two * Math.sin(radian));
+                                    } else {
+                                        startx = (int) ((float)ori_lmks[0][0] + (height / 2) * Math.sin(radian) - ((width - disWidth) / 2) * Math.cos(radian));
+                                        starty = (int) ((float)ori_lmks[0][1] - (height / 2) * Math.cos(radian) + ((width - disWidth)) * Math.sin(radian));
+                                    }
+                                    rotatedpicture = Bitmap.createBitmap(picture, 0, 0, picture.getWidth(), picture.getHeight(), matrix, true);
+                                    canvas.drawBitmap(rotatedpicture,startx,starty,null);
+
+                                    picture.recycle();
+                                    rotatedpicture.recycle();
+                                    break;
+                                case 2:
+                                    picture = BitmapFactory.decodeResource(getResources(),R.drawable.sunglass);
+                                    matrix = new Matrix();
+
+                                    matrix.postRotate((float) degree);
+
+                                    picture = Bitmap.createScaledBitmap(picture,(int)width,(int)height,true);
+
+                                    if(degree>=0) {
+                                        startx = (int) ((double)ori_lmks[0][0] - one * Math.sin(radian) - two * Math.cos(radian));
+                                        starty = (int) ((double)ori_lmks[0][1] - one * Math.cos(radian) - two * Math.sin(radian));
+                                    } else {
+                                        startx = (int) ((float)ori_lmks[0][0] + (height / 2) * Math.sin(radian) - ((width - disWidth) / 2) * Math.cos(radian));
+                                        starty = (int) ((float)ori_lmks[0][1] - (height / 2) * Math.cos(radian) + ((width - disWidth)) * Math.sin(radian));
+                                    }
+                                    rotatedpicture = Bitmap.createBitmap(picture, 0, 0, picture.getWidth(), picture.getHeight(), matrix, true);
+                                    canvas.drawBitmap(rotatedpicture,startx,starty,null);
+
+                                    picture.recycle();
+                                    rotatedpicture.recycle();
+                                    break;
+                                case 3:
+                                    picture = BitmapFactory.decodeResource(getResources(),R.drawable.rudolph_nose);
+
+                                    disWidth = Math.abs(ori_lmks[1][0]-ori_lmks[0][0])*2;
+
+                                    picture = Bitmap.createScaledBitmap(picture,(int)disWidth/2,(int)disWidth/2,true);
+
+                                    canvas.drawBitmap(picture,ori_lmks[2][0] - (int)disWidth/4,ori_lmks[2][1] - (int)disWidth/4,null);
+
+
+                                    picture.recycle();
+                                    break;
+                            }
+
+>>>>>>> finished
 
 //                            Log.d("good4", String.valueOf( "ori_lmks[0][0] " + ori_lmks[0][0] + ",  " +  ori_lmks[0][1]));
 //                            Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
@@ -531,7 +933,11 @@ public class MainActivity extends AppCompatActivity {
 //                            "class : %f, prob : %f",
 //                            output.get(0), output.get(1));
 //                    textView.setText(resultStr);
+<<<<<<< HEAD
                 }
+=======
+                        }
+>>>>>>> finished
 
                 );
 
@@ -574,4 +980,9 @@ public class MainActivity extends AppCompatActivity {
             handler.post(r);
         }
     }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> finished
 }

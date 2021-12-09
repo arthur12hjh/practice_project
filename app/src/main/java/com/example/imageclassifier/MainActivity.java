@@ -62,15 +62,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "[IC]MainActivity";
 
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
     private static final String WRITE_EXTERNAL_STORAGE_PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
     private static final int PERMISSION_REQUEST_CODE = 1;
-
-    private TextView textView;
-    private TextView logText;
 
     private FindFace ff;
     private Landmarks lm;
@@ -92,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     int displayHeight;
 
     private FrameLayout getsize;
-    //private ImageView testbitmap;
 
     private int filterNum = 0;
     final int GET_GALLERY_IMAGE = 200;
@@ -119,34 +114,14 @@ public class MainActivity extends AppCompatActivity {
         filter = findViewById(R.id.filter);
 
         getsize = findViewById(R.id.getsize);
-        //testbitmap = findViewById(R.id.testbitmap);
 
 
 
         Display display = getWindowManager().getDefaultDisplay();  // in Activity
-        /* getActivity().getWindowManager().getDefaultDisplay() */ // in Fragment
         Point size = new Point();
         display.getSize(size); // or getSize(size)
         displayWidth = size.x;
         displayHeight = size.y;
-
-
-//        logText = findViewById(R.id.logText);
-
-//        Bitmap bitmap = Bitmap.createBitmap(800,800, Bitmap.Config.ARGB_8888);
-//        Canvas canvas = new Canvas(bitmap);
-//        canvas.drawColor(Color.WHITE);
-//
-//        ImageView filter = findViewById(R.id.filter);
-//        filter.setImageBitmap(bitmap);
-//
-//        Paint paint = new Paint();
-//
-//        paint.setColor(Color.RED);
-//        paint.setStrokeWidth(30f);
-//        canvas.drawPoint(360, 640, paint);
-
-
 
         try {
             ff = new FindFace(this);
@@ -304,7 +279,6 @@ public class MainActivity extends AppCompatActivity {
                 Paint alphaPaint = new Paint();
                 alphaPaint.setAlpha(255);
 
-                Log.d("qqq", ""+resultOverlayBmp.getHeight() + " wid = " + resultOverlayBmp.getWidth());
 
                 //캔버스를 통해 비트맵을 겹치기한다.
                 Canvas canvas = new Canvas(resultOverlayBmp);
@@ -444,30 +418,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-//    protected void setFragment() {
-//        Size inputSize = cls.getModelInputSize();
-//        String cameraId = chooseCamera();
-//
-//        if(inputSize.getWidth() > 0 && inputSize.getHeight() > 0 && !cameraId.isEmpty()) {
-//            Fragment fragment = CameraFragment.newInstance(
-//                    (size, rotation) -> {
-//                        previewWidth = size.getWidth();
-//                        previewHeight = size.getHeight();
-//                        sensorOrientation = rotation - getScreenOrientation();
-//                    },
-//                    reader->processImage(reader),
-//                    inputSize,
-//                    cameraId);
-//
-//            Log.d(TAG, "inputSize : " + cls.getModelInputSize() +
-//                    "sensorOrientation : " + sensorOrientation);
-//            getFragmentManager().beginTransaction().replace(
-//                    R.id.fragment, fragment).commit();
-//        } else {
-//            Toast.makeText(this, "Can't find camera", Toast.LENGTH_SHORT).show();
-//        }
-//    }
-
     @RequiresApi(api = Build.VERSION_CODES.R)
     protected void setFragment() {
         Size inputSize_2 = ff.getModelInputSize();
@@ -486,9 +436,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-            Log.d("kk", "inputSize : " + ff.getModelInputSize() +
-                    "sensorOrientation : " + sensorOrientation);
             getFragmentManager().beginTransaction().replace(
                     R.id.fragment, fragment).commit();
         } else {
@@ -551,8 +498,6 @@ public class MainActivity extends AppCompatActivity {
 
         final Image image = reader.acquireLatestImage();
 
-        Log.d("ratio" , "imaggesize = " + image.getHeight() + ", " + image.getWidth());
-        Log.d("dspsize", "display" + displayWidth + ", " + displayHeight);
 
         if (image == null) {
             isProcessingFrame = false;
@@ -560,29 +505,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        Log.d("getsize", String.valueOf(image.getHeight()));
-
         YuvToRgbConverter.yuvToRgb(this, image, rgbFrameBitmap);
-
-
-//        runInBackground(() -> {
-//            if (cls != null && cls.isInitialized()) {
-//                final long startTime = SystemClock.uptimeMillis();
-//                final Pair<String, Float> output = cls.classify(rgbFrameBitmap, sensorOrientation);
-//                final long elapsedTime = SystemClock.uptimeMillis() - startTime;
-//
-//                runOnUiThread(() -> {
-//                    String logStr = elapsedTime + " ms";
-//                    logText.setText(logStr);
-//                    String resultStr = String.format(Locale.ENGLISH,
-//                            "class : %s, prob : %.2f%%",
-//                            output.first, output.second * 100);
-//                    textView.setText(resultStr);
-//                });
-//            }
-//            image.close();
-//            isProcessingFrame = false;
-//        });
 
         runInBackground(() -> {
             if (ff != null && ff.isInitialized()) {
@@ -600,36 +523,11 @@ public class MainActivity extends AppCompatActivity {
 
                 final float[] pred_bb = ff.classify(rgb2, sensorOrientation);
 
-                float[] reverse_bb = {224.0F-pred_bb[0], 224.0F-pred_bb[1], 224.0F-pred_bb[2], 224.0F-pred_bb[3]};
-
-
-
                 float rr = (float)displayWidth /  (224.0F-(ff.top*2));
-                float prev_ratio = (float)previewHeight / (float)previewWidth;
 
-                Log.d("prevratio", " " + ff.left + "," + ff.top);
 
                 final int[] ori_bb = {(int)((pred_bb[0]-ff.top)*rr), (int)((pred_bb[1]-ff.left)*rr),
                         (int)((pred_bb[2]-ff.top)*rr), (int)((pred_bb[3]-ff.left)*rr)};
-
-
-//                final int[] ori_bb = {(int)((pred_bb[0]-(float)ff.left)  *rr), (int)((pred_bb[1]-(float)ff.top)*rr),
-//                                        (int)((pred_bb[2]-(float)ff.left)*rr), (int)((pred_bb[3]-(float)ff.left)*rr)};
-
-                Log.d("good0", "nice!");
-                Log.d("good0", " size is " + getsize.getWidth());
-                Log.d("good0", String.valueOf( " " + pred_bb[0] + ",  " +  pred_bb[1]));
-                Log.d("good0", String.valueOf( " " + pred_bb[2] + ",  " +  pred_bb[3]));
-
-                Log.d("good1", "nice!");
-                Log.d("good1", " size is " + getsize.getWidth());
-                Log.d("good1", String.valueOf( " " + ori_bb[0] + ",  " +  ori_bb[1]));
-                Log.d("good1", String.valueOf( " " + ori_bb[2] + ",  " +  ori_bb[3]));
-
-                Log.d("good2", "nice!");
-                Log.d("good2", " size is " + getsize.getWidth());
-                Log.d("good2", String.valueOf( " " + (displayWidth - ori_bb[0]) + ",  " +  (getsize.getHeight() - ori_bb[1])));
-                Log.d("good2", String.valueOf( " " + (displayWidth - ori_bb[2]) + ",  " +  (getsize.getHeight() - ori_bb[3])));
 
 
                 final float[] center = {(ori_bb[0]+ori_bb[2])/2, (ori_bb[1]+ori_bb[3])/2};
@@ -641,36 +539,18 @@ public class MainActivity extends AppCompatActivity {
                     if(new_bb[i] < 0)   new_bb[i] = 0;
                 }
 
-                Log.d("good3", "bigface");
-                Log.d("good3", String.valueOf( " " + new_bb[0] + ",  " +  new_bb[1]));
-                Log.d("good3", String.valueOf( " " + new_bb[2] + ",  " +  new_bb[3]));
-
-
-
                 Matrix rotateMatrix = new Matrix();
                 rotateMatrix.postRotate(90); //-360~360
                 Bitmap sideInversionImg = Bitmap.createBitmap(rgbFrameBitmap, 0, 0,
                         rgbFrameBitmap.getWidth(), rgbFrameBitmap.getHeight(), rotateMatrix, false);
 
-//                Bitmap side_2 = ff.add_border_img(sideInversionImg);
-                Log.d("top", ""+ff.top+", left is" + ff.left);
-
 
                 float rate = (float)getsize.getWidth() / (float)sideInversionImg.getWidth();
-
-                Log.d("kk", ""+sideInversionImg.getWidth());
 
                 if(((int)((float)new_bb[2]/rate) <= sideInversionImg.getWidth()) && (int)((float)new_bb[3]/rate) <= sideInversionImg.getHeight())
                     face_img = cropBitmap(sideInversionImg, (int)((float)new_bb[0]/rate), (int)((float)new_bb[1]/rate),
                             (int)((float)new_bb[2]/rate), (int)((float)new_bb[3]/rate));
 
-//                float rate = (float)sideInversionImg.getWidth() / (float) getsize.getWidth();
-//                Log.d("good3", ""+ sideInversionImg.getWidth());
-//
-//
-//                if((int) (new_bb[2]*rate) <= sideInversionImg.getWidth())
-//                    face_img = cropBitmap(sideInversionImg, (int) (new_bb[0]*rate), (int) (new_bb[1]*rate), (int) (new_bb[2]*rate), (int) (new_bb[3]*rate));
-////
                 Matrix rotateMatrix2 = new Matrix();
                 rotateMatrix2.postRotate(90); //-360~360
                 face_img2 = Bitmap.createBitmap(face_img, 0, 0,
@@ -678,11 +558,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                 final float[] pred_lmks = lm.classify(face_img2, sensorOrientation);
-//                float[] reverse_lmks = new float[18];
-//                for(int i=0; i<18; i++){
-//                    reverse_lmks[i] = 224.0F - pred_lmks[i];
-//                }
-
 
                 final int[][] ori_lmks = new int[9][2];
                 int k = 0;
@@ -693,73 +568,19 @@ public class MainActivity extends AppCompatActivity {
                     ori_lmks[i][0] = (int)(((pred_lmks[k++]-lm.top)/(lm.ratio)) * rate) + new_bb[0];
                     ori_lmks[i][1] = (int)(((pred_lmks[k++]-lm.left)/(lm.ratio)) * rate) + new_bb[1];
                 }
-////
-//                Log.d("good4", "bigface");
-//                Log.d("good7", String.valueOf( "face " + face_img.getWidth() + ",  " +  face_img.getHeight()));
-//                Log.d("good7", String.valueOf( "lm.ratio " + lm.ratio ));
-//                Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[0] + ",  " +  pred_lmks[1]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[2] + ",  " +  pred_lmks[3]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[4] + ",  " +  pred_lmks[5]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[6] + ",  " +  pred_lmks[7]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[8] + ",  " +  pred_lmks[9]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[10] + ",  " +  pred_lmks[11]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[12] + ",  " +  pred_lmks[13]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[14] + ",  " +  pred_lmks[15]));
-//                Log.d("good4", String.valueOf( " " + pred_lmks[16] + ",  " +  pred_lmks[17]));
-//
-//
-
-                final long elapsedTime = SystemClock.uptimeMillis() - startTime;
-
-
-
-//                for (int i = 0; i < output.length; i++) {
-//                    System.out.println(output[i]);
-//                }
 
                 runOnUiThread(() -> {
-//                    String logStr = elapsedTime + " ms";
-//                    logText.setText(logStr);
 
                             Bitmap bitmap = Bitmap.createBitmap(getsize.getWidth(),getsize.getHeight(), Bitmap.Config.ARGB_8888);
                             Canvas canvas = new Canvas(bitmap);
                             canvas.drawColor(Color.TRANSPARENT);
 
-//                            ImageView filter = findViewById(R.id.filter);
                             filter.setImageBitmap(bitmap);
 
                             Paint paint = new Paint();
 
                             paint.setColor(Color.RED);
                             paint.setStrokeWidth(7f);
-
-//                            Bitmap test = ff.add_border_img(rgbFrameBitmap);
-
-
-
-
-
-
-
-
-//                            Bitmap ttt = ff.add_border_img();
-
-//                            album.setImageBitmap(rgbFrameBitmap2);
-
-
-//                            canvas.drawPoint((displayWidth - ori_bb[0]), (getsize.getHeight() - ori_bb[1]), paint);
-//                            canvas.drawPoint((displayWidth - ori_bb[2]), (getsize.getHeight() - ori_bb[3]), paint);
-//                            canvas.drawPoint(ori_bb[0], ori_bb[1], paint);
-//                            canvas.drawPoint(ori_bb[2], ori_bb[3], paint);
-
-//                            canvas.drawPoint(reverse_lmks[0], reverse_lmks[1], paint);
-//                            canvas.drawPoint(reverse_lmks[2], reverse_lmks[3], paint);
-//////
-////                            paint.setStrokeWidth(30f);
-////
-//                            canvas.drawPoint(new_bb[0], new_bb[1], paint);
-//                            canvas.drawPoint(new_bb[2], new_bb[3], paint);
 
 
                             Bitmap picture;
@@ -837,27 +658,6 @@ public class MainActivity extends AppCompatActivity {
                                     picture.recycle();
                                     break;
                             }
-
-
-//                            Log.d("good4", String.valueOf( "ori_lmks[0][0] " + ori_lmks[0][0] + ",  " +  ori_lmks[0][1]));
-//                            Log.d("good4", String.valueOf( "new_bb[0] " + new_bb[0] + ",  " +  new_bb[1]));
-//                            paint.setStrokeWidth(10f);
-//                            canvas.drawPoint(ori_lmks[0][0], ori_lmks[0][1], paint);
-//                            canvas.drawPoint(ori_lmks[1][0], ori_lmks[1][1], paint);
-
-
-//                            canvas.drawPoint(new_bb[0] + ori_lmks[0][0], new_bb[1] + ori_lmks[0][1], paint);
-//                            canvas.drawPoint(new_bb[2] + ori_lmks[1][0], new_bb[3] + ori_lmks[1][1], paint);
-
-
-
-
-
-//                    Log.d("test", (String) output.get(0));
-//                    String resultStr = String.format(Locale.ENGLISH,
-//                            "class : %f, prob : %f",
-//                            output.get(0), output.get(1));
-//                    textView.setText(resultStr);
                         }
 
                 );
@@ -882,18 +682,6 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-
-    public int[] find_left_top(Image image){
-        float old_size[] = {image.getWidth(), image.getHeight()};
-        float ratio = (float) (224.0 / ((image.getWidth() > image.getHeight()) ? image.getWidth() : image.getHeight()));
-        float new_size[] = {old_size[0]*ratio, old_size[1]*ratio};
-        int delta_w = 224 - (int)new_size[0];
-        int delta_h = 224 - (int)new_size[1];
-        int top = delta_h / 2;
-        int left = delta_w / 2;
-        int result[] = {left, top};
-        return result;
-    }
 
 
     protected synchronized void runInBackground(final Runnable r) {

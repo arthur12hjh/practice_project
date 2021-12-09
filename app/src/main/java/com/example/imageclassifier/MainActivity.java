@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "[IC]MainActivity";
 
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
+    private static final String WRITE_EXTERNAL_STORAGE_PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
     private static final int PERMISSION_REQUEST_CODE = 1;
 
     private TextView textView;
@@ -155,10 +157,11 @@ public class MainActivity extends AppCompatActivity {
             ioe.printStackTrace();
         }
 
-        if(checkSelfPermission(CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
+        if(checkSelfPermission(CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED
+        && checkSelfPermission(WRITE_EXTERNAL_STORAGE_PERMISSION) == PackageManager.PERMISSION_GRANTED) {
             setFragment();
         } else {
-            requestPermissions(new String[]{CAMERA_PERMISSION}, PERMISSION_REQUEST_CODE);
+            requestPermissions(new String[]{CAMERA_PERMISSION, WRITE_EXTERNAL_STORAGE_PERMISSION}, PERMISSION_REQUEST_CODE);
         }
 
         filterbt = (ImageButton) findViewById(R.id.filterbt);

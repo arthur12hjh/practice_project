@@ -13,31 +13,31 @@ app - debug.apk 파일을 다운로드 받거나, https://drive.google.com/file/
 app-debug.apk를 설치합니다. 
 혹은 README에 있는
 https://drive.google.com/file/d/1ynA7sZoMvt8UIfShR4SnaQ1EmBDjfjPy/view?usp=sharing 
-링크를 통해 애플리케이션을 설치합니다.
+링크를 통해 애플리케이션을 설치합니다.  
 ![1](https://github.com/arthur12hjh/practice_project/assets/90200225/0a2ee7ec-5cdd-4810-a8ba-39f47c49ef85)
 
 ## 2. 사용 메뉴얼
 
 ### 1) 최초 실행
-① DongFil 애플리케이션을 실행한다.
-② DongFil 애플리케이션에 사진 촬영 권한을 부여하는 것을 허용한다.
+① DongFil 애플리케이션을 실행한다.  
+② DongFil 애플리케이션에 사진 촬영 권한을 부여하는 것을 허용한다.  
 
 ### 2) 메인 화면
-![2](https://github.com/arthur12hjh/practice_project/assets/90200225/eacf56bd-c891-42d6-9f52-afbd1c7f6add)
-① 앨범으로 이동하는 버튼
-② 사진을 촬영하는 버튼
-③ 필터 탭으로 이동하는 버튼
-④ 필터를 추가하는 버튼
-⑤ 필터 화면에서 추가된 필터를 지우는 버튼
+![2](https://github.com/arthur12hjh/practice_project/assets/90200225/eacf56bd-c891-42d6-9f52-afbd1c7f6add)  
+① 앨범으로 이동하는 버튼  
+② 사진을 촬영하는 버튼  
+③ 필터 탭으로 이동하는 버튼  
+④ 필터를 추가하는 버튼  
+⑤ 필터 화면에서 추가된 필터를 지우는 버튼  
 
 ### 3) 필터 화면
-① 3번 필터 버튼을 누르게 되면, 필터 화면으로 이동하게 된다.
-② 필터 버튼에선 필터를 추가할 수 있거나, 추가된 필터를 지울 수도 있다.
+① 3번 필터 버튼을 누르게 되면, 필터 화면으로 이동하게 된다.  
+② 필터 버튼에선 필터를 추가할 수 있거나, 추가된 필터를 지울 수도 있다.  
 
 ### 4) 사진 촬영
-① 발자국 모양의 사진을 촬영하는 버튼을 누르면, 스크린에 나오는 화면이 필터가 적용된 상태로 촬영된다.
-② image saved가 뜬다면 촬영에 성공한 것이다.
-③ 앨범 버튼을 통해 앨범에 들어가서 확인해 볼 수 있다.
+① 발자국 모양의 사진을 촬영하는 버튼을 누르면, 스크린에 나오는 화면이 필터가 적용된 상태로 촬영된다.  
+② image saved가 뜬다면 촬영에 성공한 것이다.  
+③ 앨범 버튼을 통해 앨범에 들어가서 확인해 볼 수 있다.  
 
 # 결과
-![3](https://github.com/arthur12hjh/practice_project/assets/90200225/e875805f-b0c2-482e-a840-f6aca333686f)
+![3](https://github.com/arthur12hjh/practice_project/assets/90200225/e875805f-b0c2-482e-a840-f6aca333686f)  
